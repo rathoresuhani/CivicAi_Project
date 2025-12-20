@@ -19,3 +19,13 @@ class ComplaintCreateSchema(BaseModel):
       }
 
     }
+
+class ComplaintStatusUpdateSchema(BaseModel):
+  status: ["pending","in progress","resolved"]
+
+  class config:
+    json_schema_extra = {
+      "example":{
+        "status":"in progress"
+      }
+    }

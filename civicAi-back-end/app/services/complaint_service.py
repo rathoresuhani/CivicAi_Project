@@ -33,3 +33,14 @@ async def get_complaint_id_by_service(complaint_id:str):
     )
 
     return await cursor.to_list(length=None)
+  
+  async def update_complaint_status_service(complaint_id:str, status:str):
+    result = await database["complaints"].update_one(
+       {"complaint_id": complaint_id},
+       {
+         "$set":{
+           "status":status,
+           "updated_at":datetime.utcnow()
+         }
+       }
+    )
