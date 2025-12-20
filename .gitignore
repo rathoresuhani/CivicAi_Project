@@ -1,0 +1,5 @@
+# Ignore Python virtual environment
+civicAi-back-end/venv/
+__pycache__/
+.env
+*.pyc
