@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Literal, Optional
 
 class ComplaintCreateSchema(BaseModel):
   email: EmailStr
@@ -21,11 +21,23 @@ class ComplaintCreateSchema(BaseModel):
     }
 
 class ComplaintStatusUpdateSchema(BaseModel):
-  status: ["pending","in progress","resolved"]
+  status: Literal["pending","in_progress","resolved"]
+  admin_remark: Optional[str] = None
 
-  class config:
+  class Config:
     json_schema_extra = {
       "example":{
-        "status":"in progress"
+        "status":"in_progress",
+        "admin_remark":"Pothole repaired by muncipal department"
       }
     }
+
+class ComplaintPriorityUpdateSchema(BaseModel):
+    priority: Literal["high", "medium", "low"]
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "priority": "high"
+            }
+        }
