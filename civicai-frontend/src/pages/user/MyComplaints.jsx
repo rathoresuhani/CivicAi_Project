@@ -24,12 +24,22 @@ const MyComplaints = () => {
     setComplaints([]);
     setLoading(true);
     setTimeout(() => {
-      setLoading(false);
-
-      if (email.toLowerCase().includes("wrong")) {
-        setComplaints([]);
-        return;
+    setLoading(false);
+    if (email.toLowerCase().includes("wrong")) {
+      setComplaints([]);
+      return;
       }
+      setComplaints([
+        {
+          complaint_id: "CIVIC-10101",
+          name: "Suhani Rathore",
+          email: email,
+          phone: "9876543210",
+          status: "pending",
+          priority: "high",
+          created_at: new Date().toISOString(),
+        },
+      ]);
     })
   }
 }
