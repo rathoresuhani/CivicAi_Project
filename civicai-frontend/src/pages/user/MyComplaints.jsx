@@ -23,5 +23,13 @@ const MyComplaints = () => {
     setError("");
     setComplaints([]);
     setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+
+      if (email.toLowerCase().includes("wrong")) {
+        setComplaints([]);
+        return;
+      }
+    })
   }
 }
