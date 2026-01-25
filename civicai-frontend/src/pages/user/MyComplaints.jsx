@@ -1,6 +1,6 @@
 import {useState} from 'react';
-import ComplaintList from '../components/complaint/ComplaintList';
-import Loader from '../components/common/Loader';
+import ComplaintList from '../../components/complaint/ComplaintList';
+import Loader from '../../components/common/Loader';
 
 const MyComplaints = () => {
   const [email,setEmail] = useState("");
@@ -39,7 +39,62 @@ const MyComplaints = () => {
           priority: "high",
           created_at: new Date().toISOString(),
         },
+        {
+          complaint_id: "CIVIC-20202",
+          name: "Suhani Rathore",
+          email: email,
+          phone: "9876543210",
+          status: "in_progress",
+          priority: "medium",
+          created_at: new Date().toISOString(),
+        },
       ]);
-    })
+    }, 1200);
   }
-}
+return (
+  <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-semibold text-black">
+          My Complaints (By Email)
+        </h1>
+        <p className="mt-2 text-gray-600">
+          Enter your email to fetch all complaints registered with it.
+        </p>
+      </div>
+      <div className="w-full bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <form
+          onSubmit={handleFetch}
+          className="flex flex-col sm:flex-row gap-3"
+        >
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email (e.g. suhani@gmail.com)"
+            className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className={`px-6 py-3 rounded-lg font-semibold transition ${
+              loading
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-black text-white hover:bg-gray-900"
+            }`}
+          >{loading ? "Fetching...":"Fetch Complaints"}</button>
+        </form>
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+      </div>
+      <div className="mt-10">
+        {loading && <Loader text="Fetching your complaints..." />}
+        {!loading && (
+          <ComplaintList
+            title="Your Complaints"
+            complaints={complaints}
+            emptyText="No complaints found for this email."
+          />
+        )}
+      </div>
+    </div>
+  );
+};
