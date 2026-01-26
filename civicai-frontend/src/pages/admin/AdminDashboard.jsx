@@ -3,6 +3,12 @@ import {useNavigate} from 'react-router-dom';
 import AdminFilter from '../../components/admin/AdminFilter';
 import AdminTable from '../../components/admin/AdminTable';
 
+import {
+  getAdminComplaints,
+  updateComplaintStatus,
+  updateComplaintPriority,
+} from "../../services/adminService";
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
@@ -22,37 +28,23 @@ const AdminDashboard = () => {
     }
   },[navigate]);
 
-  const fetchComplaints = () => {
-    setLoading(true);
+  const fetchComplaints = async () => {
+    try{
+      setLoading(true);
+      setError("");
 
-    setTimeout(() => {
+      const data = await getAdminComplaints(filters);
+      setComplaints(data.compplaints);
+    }catch(err){
+      setError(err.message || "Failed to fetch complaints");
+    }finally{
       setLoading(false);
-
-      setComplaints([
-        {complaint_id: "CIVIC-11111",
-          name: "Aman Gupta",
-          email: "aman@gmail.com",
-          phone: "9998887776",
-          status: "pending",
-          priority: "high",
-          created_at: new Date().toISOString(),
-        },
-        {
-          complaint_id: "CIVIC-22222",
-          name: "Neha Sharma",
-          email: "neha@gmail.com",
-          phone: "8887776665",
-          status: "in_progress",
-          priority: "medium",
-          created_at: new Date().toISOString(),
-        },
-        ])
-    },1200);
+    }
   };
-
   useEffect(() => {
     fetchComplaints();
   },[]);
+
   const handleApplyFilters = () => {
     fetchComplaints();
   };
@@ -62,29 +54,46 @@ const AdminDashboard = () => {
   };
 
   const handleUpdateStatus = (complaintId, newStatus) => {
-  setActionLoadingId(complaintId);
+    try{
+      setActionLoadingId(complaintId);
+      await updateComplaintStatus(complaintId,newStatus);
+    if (newStatus === "resolved") {
+        setComplaints((prev) =>
+          prev.filter((c) => c.complaint_id !== complaintId)
+        );
+      } else {
+        setComplaints((prev) =>
+          prev.map((c) =>
+            c.complaint_id === complaintId
+              ? { ...c, status: newStatus }
+              : c
+          )
+        );
+      }
+    } catch (err) {
+      alert(err.message || "Failed to update status");
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
 
-  setTimeout(() => {
+  export const handleUpdatePriority = async (complaintId, newPriority) => {
+    try{
+      setActionLoadingId(complaintId);
+      await updateComplaintPriority(complaintId,newPriority);
     setComplaints((prev) =>
-      prev
-        .filter((c) =>
-          c.complaint_id === complaintId && newStatus === "resolved"
-            ? false
-            : true
-        )
-
-        .map((c) =>
+        prev.map((c) =>
           c.complaint_id === complaintId
-            ? { ...c, status: newStatus }
+            ? { ...c, priority: newPriority }
             : c
         )
-    );
-
-    setActionLoadingId(null);
-  }, 800);
-};
-
-
+      );
+    } catch (err) {
+      alert(err.message || "Failed to update priority");
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
 return (
   <div className="max-w-7xl mx-auto px-4 py-10">
       <div className="mb-8">
