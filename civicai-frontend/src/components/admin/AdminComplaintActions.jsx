@@ -4,7 +4,7 @@ const AdminComplaintSections = ({
   complaintId,
   currentStatus = "pending",
   currentPriority = "medium",
-  onUpdateStaus,
+  onUpdateStatus,
   onUpdatePriority,
   loading = false,
 }) => {

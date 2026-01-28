@@ -1,22 +1,29 @@
 import {useState} from 'react';
-import ComplaintForm from '../components/complaint/ComplaintForm';
+import ComplaintForm from '../../components/complaint/ComplaintForm';
+import { createComplaint } from '../../services/complaintService';
 
 const RaiseComplaint = () => {
   const [loading, setLoading] = useState(false);
   const [successData, setSuccessData] = useState(null);
+  const [error,setError] = useState("");
 
   const handleSubmit = async (data) => {
+    try{
     console.log("Complaint Form data:", data);
     setLoading(true);
+    setError("");
     setSuccessData(null);
 
-    setTimeout(() => {
-      setLoading(false);
+    const response = await createComplaint(formData);
       setSuccessData({
-        complaint_id: "CIVIC-" + Math.floor(Math.random() * 100000),
-        priority: "medium",
+        complaint_id: response.complaint_id,
+        priority: response.priority,
       });
-    }, 1200);
+    }catch(err){
+      setError(err.message || "Failed to submit complaint");
+    }finally{
+      setLoading(false);
+    }
   };
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">

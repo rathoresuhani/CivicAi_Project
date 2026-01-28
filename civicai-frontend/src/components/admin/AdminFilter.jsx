@@ -44,6 +44,7 @@ const AdminFilter = ({filters, setFilters, onApply, onReset}) => {
           <input
             type="number"
             min="1"
+            max="30"
             name="days"
             value={filters.days}
             onChange={handleChange}

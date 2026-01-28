@@ -26,7 +26,7 @@ async def get_complaint_id_by_service(complaint_id:str):
     {"_id":0}
     )
   
-  async def get_complaint_by_email_service(email:str):
+async def get_complaint_by_email_service(email:str):
     cursor = database["complaints"].find(
       {"email": email},
       {"_id":0}
@@ -34,7 +34,7 @@ async def get_complaint_id_by_service(complaint_id:str):
 
     return await cursor.to_list(length=None)
   
-  async def update_complaint_status_service(complaint_id:str, status:str):
+async def update_complaint_status_service(complaint_id:str, status:str):
     result = await database["complaints"].update_one(
        {"complaint_id": complaint_id},
        {

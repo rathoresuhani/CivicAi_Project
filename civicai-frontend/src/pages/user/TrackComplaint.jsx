@@ -1,6 +1,8 @@
-import {useState} from 'react';
-import ComplaintCard from '../components/complaint/ComplaintCard';
-import Loader from '../components/common/Loader';
+import { useState } from "react";
+import ComplaintCard from "../../components/complaint/ComplaintCard";
+import Loader from "../../components/common/Loader";
+import { getComplaintById } from "../../services/complaintService";
+
 
 const TrackComplaint = () => {
   const [complaintId, setComplaintId] = useState("");
@@ -15,29 +17,18 @@ const TrackComplaint = () => {
       setError("Please enter Complaint Id");
       return;
     }
+    try{
     setError("");
     setComplaint(null);
     setLoading(true);
-
-    setTimeout(() => {
+    const data = await getComplaintById(complaintId.trim());
+    setComplaint(data);
+    }catch(err){
+      setError(err.message || err.detail || "Failed to fetch complaint");
+    }finally{
       setLoading(false);
-      if(complaintId.toLowerCase().includes("wrong")){
-        setError("Complaint not found. Please check your Complaint ID.");
-        return;
-      }
-      setComplaint({
-        complaint_id: complaintId,
-        name: "Suhani Rathore",
-        email: "suhani@gmail.com",
-        phone: "9876543210",
-        status: "in_progress",
-        priority: "high",
-        category: "",
-        location: "",
-        description: "",
-        created_at: new Date().toISOString(),
-      });
-    }, 1200);
+    }
+    
   };
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">

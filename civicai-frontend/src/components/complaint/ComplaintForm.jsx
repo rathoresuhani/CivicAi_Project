@@ -1,7 +1,7 @@
 import {useState} from 'react';
 
 const ComplaintForm = ({onSubmit,loading=false}) => {
-  const [FormData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name:'',
     email:'',
     phone:'',
@@ -10,29 +10,29 @@ const ComplaintForm = ({onSubmit,loading=false}) => {
     description:''
   });
 
-  const [errors, Seterrors] = useState({});
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const {name, value} = e.target;
     setFormData((prev) => ({...prev, [name]:value}));
-    Seterrors((prev) => ({...prev, [name]:''}));
+    setErrors ((prev) => ({...prev, [name]:''}));
   };
 
   const validate = () => {
     const newErrors = {};
-    if(!FormData.name) newErrors.name = 'Name is required';
-    if(!FormData.email) newErrors.email = 'Email is required';
-    if(!FormData.phone) newErrors.phone = 'Phone number is required';
+    if(!formData.name) newErrors.name = 'Name is required';
+    if(!formData.email) newErrors.email = 'Email is required';
+    if(!formData.phone) newErrors.phone = 'Phone number is required';
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (FormData.email && !emailRegex.test(FormData.email)) {
+    if (formData.email && !emailRegex.test(formData.email)) {
       newErrors.email = "Enter a valid email";
     }
     const phoneRegex = /^[0-9]{10}$/;
-    if (FormData.phone && !phoneRegex.test(FormData.phone)) {
+    if (formData.phone && !phoneRegex.test(formData.phone)) {
       newErrors.phone = "Enter a valid 10-digit phone number";
     }
-    Seterrors(newErrors);
+    setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   const handleSubmit = async (e) => {
@@ -54,7 +54,7 @@ const ComplaintForm = ({onSubmit,loading=false}) => {
             <input
               type="text"
               name="name"
-              value={FormData.name}
+              value={formData.name}
               onChange={handleChange}
               placeholder="Enter your name"
               className="mt-2 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black"
@@ -70,7 +70,7 @@ const ComplaintForm = ({onSubmit,loading=false}) => {
             <input
               type="email"
               name="email"
-              value={FormData.email}
+              value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
               className="mt-2 w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black"
@@ -157,7 +157,7 @@ const ComplaintForm = ({onSubmit,loading=false}) => {
           className={`w-full py-3 rounded-lg font-semibold transition ${
             loading
               ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-              : "bg-black text-white hover:bg-gray-900"
+              : "bg-black text-green-400 hover:bg-gray-900"
           }`}
         >
           {loading ? 'Submitting...':'Submit Complaint'}

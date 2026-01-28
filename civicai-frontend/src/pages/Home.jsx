@@ -1,4 +1,5 @@
-import Link from 'react-router-dom';
+import { Link } from "react-router-dom";
+
 const Home = ()  => {
   return (
     <div className="w-full">
@@ -62,10 +63,6 @@ const Home = ()  => {
         <h2 className="text-xl font-semibold text-black">
           Common Municipal Issues
         </h2>
-        <p className="text-sm text-gray-600 mt-1">
-          Later you can add images here (garbage, water leakage, street lights,
-          drainage etc.).
-        </p>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-5">
           {["Garbage", "Water Supply", "Street Lights", "Drainage"].map(
             (item) => (
