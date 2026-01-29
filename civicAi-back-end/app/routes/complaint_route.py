@@ -1,18 +1,23 @@
 from fastapi import APIRouter, Query, Header
 from datetime import datetime
 from fastapi import HTTPException
+import os
+
 
 import uuid
 
 from app.schema.complaint_schema import (
   ComplaintCreateSchema,
-  ComplaintStatusUpdateSchema
+  ComplaintStatusUpdateSchema,
+  ComplaintPriorityUpdateSchema
 )
 from app.services.complaint_service import (
   create_complaint_service,
   get_complaint_id_by_service,
   get_complaint_by_email_service,
-  update_complaint_status_service
+  update_complaint_status_service,
+  update_complaint_priority_service,
+  get_admin_complaints_service
 )
 
 from app.core.database import database
@@ -68,4 +73,58 @@ async def update_complaint_status(complaint_id: str, payload: ComplaintStatusUpd
        "message": "Complaint status updated successfully",
        "complaint_id": complaint_id,
        "new_status": payload.status
+    }
+
+@router.patch("/complaints/{complaint_id}/priority")
+async def update_complaint_priority(
+    complaint_id: str,
+    payload: ComplaintPriorityUpdateSchema,
+    x_admin_key: str = Header(...)
+):
+    ADMIN_KEY = os.getenv("ADMIN_SECRET_KEY")
+
+    if x_admin_key != ADMIN_KEY:
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden: Invalid admin key"
+        )
+
+    updated_priority = await update_complaint_priority_service(
+        complaint_id,
+        payload.priority
+    )
+
+    if not updated_priority:
+        raise HTTPException(
+            status_code=404,
+            detail="Complaint not found"
+        )
+
+    return {
+        "message": "Complaint priority updated successfully",
+        "complaint_id": complaint_id,
+        "new_priority": payload.priority
+    }
+
+@router.get("/admin/complaints")
+async def get_admin_complaints(
+    status: str | None = None,
+    priority: str | None = None,
+    days: int | None = None,
+    x_admin_key: str = Header(...)
+):
+    ADMIN_KEY = os.getenv("ADMIN_SECRET_KEY")
+
+    if x_admin_key != ADMIN_KEY:
+        raise HTTPException(status_code=403, detail="Invalid admin key")
+
+    complaints = await get_admin_complaints_service(
+        status=status,
+        priority=priority,
+        days=days
+    )
+
+    return {
+        "total": len(complaints),
+        "complaints": complaints
     }
