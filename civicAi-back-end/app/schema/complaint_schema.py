@@ -1,19 +1,24 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 from typing import Literal
 
 
 class ComplaintCreateSchema(BaseModel):
-  email: EmailStr
-  raw_description: str
-  raw_image_url: Optional[str] = None
-  latitude: float
-  longitude: float
+  name: str
+  email: str
+  category: str
+  phone: str = Field(..., pattern="^[6-9][0-9]{9}$")
+  raw_description: str | None = None
+  raw_image_url: str | None = None
+  latitude: float | None = None
+  longitude: float | None = None
 
   class Config:
     json_schema_extra={
       "example":{
-        "email":"user@gmail.com",
+        "name": "",
+        "phone": "",
+        "email": "user@gmail.com",
         "raw_description": "Garbage is overflowing near my house",
         "raw_image_url": "image.jpg",
         "latitude": 28.6139,
@@ -28,7 +33,7 @@ class ComplaintStatusUpdateSchema(BaseModel):
   class Config:
     json_schema_extra = {
       "example":{
-        "status":"in_progress"
+        "status":"pending"
       }
     }
 

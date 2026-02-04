@@ -8,6 +8,9 @@ import TrackComplaint from '../pages/user/TrackComplaint';
 
 import AdminLogin from '../pages/admin/AdminLogin';
 import AdminDashboard from '../pages/admin/AdminDashboard';
+import ResolvedComplaints from '../pages/admin/resolvedComplaints';
+import AdminComplaintDetails from "../pages/admin/AdminComplaintDetails";
+
 
 const AppRoutes = () => {
   return (
@@ -19,6 +22,8 @@ const AppRoutes = () => {
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/admin/resolved" element={<ResolvedComplaints />} />
+      <Route path="/admin/complaints/:id" element={<AdminComplaintDetails />} />
     </Routes>
   );
 }

@@ -13,7 +13,7 @@ const AdminLogin = () => {
       setError("Please enter the Admin Key");
       return;
     }
-    localStorage.setItem("ADMIN KEY",adminKey);
+    localStorage.setItem("ADMIN_KEY",adminKey);
     setError("");
     navigate('/admin/dashboard');
   }
@@ -38,7 +38,7 @@ const AdminLogin = () => {
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
-            className="w-full py-3 rounded-lg bg-black text-white font-semibold hover:bg-gray-900 transition"
+            className="w-full py-3 rounded-lg bg-black text-gray-600 font-semibold hover:bg-gray-900 transition"
           >
             Login
           </button>

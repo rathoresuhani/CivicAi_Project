@@ -2,9 +2,9 @@ import { useState } from "react";
 
 const ComplaintForm = ({ onSubmit, loading = false }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    name:"",
+    phone:"",
     email: "",
-    phone: "",
     image: null,
     category: "",
     location: "",
@@ -37,10 +37,14 @@ const ComplaintForm = ({ onSubmit, loading = false }) => {
     return Object.keys(newErrors).length === 0;
   };
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-    if (onSubmit) onSubmit(FormData);
-  };
+  e.preventDefault();
+  if (!validate()) return;
+
+  console.log("FORM DATA BEFORE SUBMIT:", formData);
+
+  if (onSubmit) onSubmit(formData);
+};
+
   return (
     <div className="w-full bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
       <h2 className="text-lg font-semibold text-black">Raise a Complaint</h2>

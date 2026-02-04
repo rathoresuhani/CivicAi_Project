@@ -9,7 +9,7 @@ const StatusBadge = ({ status ="pending"}) => {
   return (
     <span
       className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${
-        statusStyles[normalized] || "bg-gray-100 text-gray-700 border-gray-200"
+        statusStyle[normalized] || "bg-gray-100 text-gray-700 border-gray-200"
       }`}
     >
       {label}

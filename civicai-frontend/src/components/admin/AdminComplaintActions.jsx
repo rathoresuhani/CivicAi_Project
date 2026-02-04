@@ -17,7 +17,7 @@ const AdminComplaintSections = ({
          <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black"
+          className=" px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black"
           disabled={loading}
         >
           <option value="pending">Pending</option>
@@ -39,7 +39,7 @@ const AdminComplaintSections = ({
         <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black"
+          className=" px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-black"
           disabled={loading}
         >
           <option value="high">High</option>
@@ -60,10 +60,6 @@ const AdminComplaintSections = ({
           Change
         </button>
         </div>
-         <p className="text-xs text-gray-500">
-        Note: Once a complaint is marked as <b>Resolved</b>, it will disappear
-        from the active list.
-      </p>
       </div>
       </div>
   )

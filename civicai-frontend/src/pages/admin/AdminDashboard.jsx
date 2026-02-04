@@ -17,13 +17,15 @@ const AdminDashboard = () => {
     priority: "",
     days: "",
   });
+
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState(null);
   const [error, setError] = useState("");
+  const [view, setView] = useState("active");
 
   useEffect(() => {
-    const key = localStorage.getItem("ADMIN KEY");
+    const key = localStorage.getItem("ADMIN_KEY");
     if (!key) {
       navigate("/admin/login");
     }
@@ -35,22 +37,31 @@ const AdminDashboard = () => {
       setError("");
 
       const data = await getAdminComplaints(filters);
-      setComplaints(data || []);
+
+      const complaintsArray = data.complaints || [];
+
+      if (view === "active") {
+        setComplaints(complaintsArray.filter((c) => c.status !== "resolved"));
+      } else {
+        setComplaints(complaintsArray.filter((c) => c.status === "resolved"));
+      }
     } catch (err) {
       setError(err.message || "Failed to fetch complaints");
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchComplaints();
-  }, []);
+  }, [view]);
 
   const handleApplyFilters = () => {
     fetchComplaints();
   };
+
   const handleResetFilters = () => {
-    setFilters({ status: "", priority: "", days: "" });
+    setFilters({ status: "pending", priority: "", days: "" });
     fetchComplaints();
   };
 
@@ -104,19 +115,45 @@ const AdminDashboard = () => {
             Admin Dashboard
           </h1>
           <p className="mt-2 text-gray-600">
-            Manage and resolve active civic complaints.
+            {view === "active"
+              ? "Manage active civic complaints."
+              : "Resolved complaints history."}
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            localStorage.removeItem("ADMIN_KEY");
-            navigate("/admin/login");
-          }}
-          className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold hover:bg-gray-100"
-        >
-          Logout
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setView("active")}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border ${
+              view === "active"
+                ? "bg-black text-white border-black"
+                : "bg-white text-black border-gray-300 hover:bg-gray-100"
+            }`}
+          >
+            Active
+          </button>
+
+          <button
+            onClick={() => setView("resolved")}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border ${
+              view === "resolved"
+                ? "bg-black text-white border-black"
+                : "bg-white text-black border-gray-300 hover:bg-gray-100"
+            }`}
+          >
+            Resolved
+          </button>
+
+          <button
+            onClick={() => {
+              localStorage.removeItem("ADMIN_KEY");
+              navigate("/admin/login");
+            }}
+            className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold hover:bg-gray-100"
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="mb-8">
@@ -138,6 +175,7 @@ const AdminDashboard = () => {
         onUpdateStatus={handleUpdateStatus}
         onUpdatePriority={handleUpdatePriority}
         actionLoadingId={actionLoadingId}
+        showActions={view === "active"}
       />
     </div>
   );

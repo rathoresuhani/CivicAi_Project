@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Query, Header
 from datetime import datetime
+from typing import Optional
 from fastapi import HTTPException
 import os
 
@@ -26,11 +27,14 @@ router = APIRouter()
 
 @router.post("/complaints")
 async def create_complaint(payload: ComplaintCreateSchema):
-  complaint_id = await create_complaint_service(payload)
-  return {
-    "message": "Complaint registered Successfully",
-    "complaint_id": complaint_id
-  }
+    result = await create_complaint_service(payload)
+
+    return {
+        "message": "Complaint registered Successfully",
+        "complaint_id": result.get("complaint_id"),
+        "priority": result.get("priority")
+    }
+
 
 @router.get("/complaints/{complaint_id}")
 async def track_complaint(complaint_id: str):
@@ -108,15 +112,18 @@ async def update_complaint_priority(
 
 @router.get("/admin/complaints")
 async def get_admin_complaints(
-    status: str | None = None,
-    priority: str | None = None,
-    days: int | None = None,
+    status: Optional[str] = Query(None),
+    priority: Optional[str] = Query(None),
+    days: Optional[int] = Query(None),
     x_admin_key: str = Header(...)
 ):
     ADMIN_KEY = os.getenv("ADMIN_SECRET_KEY")
 
     if x_admin_key != ADMIN_KEY:
-        raise HTTPException(status_code=403, detail="Invalid admin key")
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden: Invalid admin key"
+        )
 
     complaints = await get_admin_complaints_service(
         status=status,
@@ -127,4 +134,31 @@ async def get_admin_complaints(
     return {
         "total": len(complaints),
         "complaints": complaints
+    }
+
+@router.delete("/admin/complaints/{complaint_id}")
+async def delete_complaint(
+    complaint_id: str,
+    x_admin_key: str = Header(...)
+):
+    ADMIN_KEY = os.getenv("ADMIN_SECRET_KEY")
+
+    if x_admin_key != ADMIN_KEY:
+        raise HTTPException(
+            status_code=403,
+            detail="Forbidden: Invalid admin key"
+        )
+
+    result = await database["complaints"].delete_one({
+        "complaint_id": complaint_id
+    })
+
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Complaint not found"
+        )
+
+    return {
+        "message": "Complaint deleted successfully"
     }

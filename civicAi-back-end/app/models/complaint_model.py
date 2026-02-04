@@ -14,6 +14,7 @@ def complaint_document(
   return {
     "complaint_id":complaint_id,
     "email": email,
+    "category":category,
     "raw_description": raw_description,
     "raw_image_url": raw_image_url,
     "latitude": latitude,

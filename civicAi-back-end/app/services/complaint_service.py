@@ -3,9 +3,6 @@ from datetime import datetime, timedelta
 from app.core.database import database
 
 
-# =========================
-# CREATE COMPLAINT
-# =========================
 async def create_complaint_service(payload):
     complaint_id = f"COMP-{uuid.uuid4().hex[:8].upper()}"
 
@@ -15,11 +12,12 @@ async def create_complaint_service(payload):
         "email": payload.email,
         "phone": payload.phone,
         "category": payload.category,
-        "location": payload.location,
-        "description": payload.description,
-        "image_url": getattr(payload, "image_url", None),
-        "status": "pending",
+        "raw_description": payload.raw_description,
+        "raw_image_url": payload.raw_image_url,
+        "latitude": payload.latitude,
+        "longitude": payload.longitude,
         "priority": "medium",
+        "status": "pending",
         "created_at": datetime.utcnow(),
     }
 
@@ -31,9 +29,6 @@ async def create_complaint_service(payload):
     }
 
 
-# =========================
-# GET COMPLAINT BY ID
-# =========================
 async def get_complaint_id_by_service(complaint_id: str):
     complaint = await database["complaints"].find_one(
         {"complaint_id": complaint_id},
@@ -42,9 +37,6 @@ async def get_complaint_id_by_service(complaint_id: str):
     return complaint
 
 
-# =========================
-# GET COMPLAINTS BY EMAIL
-# =========================
 async def get_complaint_by_email_service(email: str):
     cursor = database["complaints"].find(
         {"email": email},
@@ -53,9 +45,6 @@ async def get_complaint_by_email_service(email: str):
     return await cursor.to_list(length=None)
 
 
-# =========================
-# UPDATE STATUS (ADMIN)
-# =========================
 async def update_complaint_status_service(complaint_id: str, status: str):
     complaint = await database["complaints"].find_one(
         {"complaint_id": complaint_id}
@@ -80,9 +69,6 @@ async def update_complaint_status_service(complaint_id: str, status: str):
     return status
 
 
-# =========================
-# UPDATE PRIORITY (ADMIN)
-# =========================
 async def update_complaint_priority_service(complaint_id: str, priority: str):
     complaint = await database["complaints"].find_one(
         {"complaint_id": complaint_id}
@@ -102,9 +88,6 @@ async def update_complaint_priority_service(complaint_id: str, priority: str):
     return priority
 
 
-# =========================
-# ADMIN – GET ALL COMPLAINTS
-# =========================
 async def get_admin_complaints_service(
     status: str | None = None,
     priority: str | None = None,

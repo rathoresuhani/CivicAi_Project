@@ -8,7 +8,11 @@ export const getAdminComplaints = async (filters = {}) => {
     if (filters.priority) params.priority = filters.priority;
     if (filters.days) params.days = filters.days;
 
-    const response = await api.get("/admin/complaints", { params });
+    const response = await api.get("/admin/complaints", { params,
+      headers: {
+      "x-admin-key": localStorage.getItem("ADMIN_KEY")
+      },
+     });
     return response.data;
   } catch (error) {
     throw (
@@ -20,34 +24,48 @@ export const getAdminComplaints = async (filters = {}) => {
 };
 
 export const updateComplaintStatus = async (complaintId, status) => {
+  const response = await api.patch(
+    `/complaints/${complaintId}/status`,
+    { status },
+    {
+      headers: {
+        "x-admin-key": localStorage.getItem("ADMIN_KEY"),
+      },
+    }
+  );
+  return response.data;
+};
+
+export const updateComplaintPriority = async (complaintId, priority) => {
+  const response = await api.patch(
+    `/complaints/${complaintId}/priority`,
+    { priority },
+    {
+      headers: {
+        "x-admin-key": localStorage.getItem("ADMIN_KEY"),
+      },
+    }
+  );
+  return response.data;
+};
+
+export const getComplaintById = async (id) => {
   try {
-    const response = await api.patch(
-      `/complaints/${complaintId}/status`,
-      { status }
-    );
+    const response = await api.get(`/complaints/${id}`);
     return response.data;
   } catch (error) {
-    throw (
-      error.response?.data || {
-        message: "Failed to update complaint status",
-      }
-    );
+    throw error.response?.data || { message: "Failed to fetch complaint" };
   }
 };
 
-
-export const updateComplaintPriority = async (complaintId, priority) => {
+export const deleteComplaint = async (id) => {
   try {
-    const response = await api.patch(
-      `/complaints/${complaintId}/priority`,
-      { priority }
-    );
-    return response.data;
+    await api.delete(`/admin/complaints/${id}`, {
+      headers: {
+        "x-admin-key": localStorage.getItem("ADMIN_KEY"),
+      },
+    });
   } catch (error) {
-    throw (
-      error.response?.data || {
-        message: "Failed to update complaint priority",
-      }
-    );
+    throw error.response?.data || { message: "Failed to delete complaint" };
   }
 };
